@@ -46,14 +46,16 @@ public class Order implements Entity
         return format("From %s - in %s", customer.getName(), restaurant.getName());
     }
 
-    public Double getPrice()
+    public double getPrice()
     {
-        Double totalAmount = 0D;
+        double totalAmount = 0D;
         int mealNumber = 0;
         Iterator mealIterator = meals.iterator();
         while(mealIterator.hasNext()) {
             Meal each = (Meal) mealIterator.next();
             mealNumber +=1;
+
+            double itemFullPrice = each.getPrice();
 
             boolean hasOrderedInThePastWeek = false;
             for (Order order : customer.getOrders())
@@ -61,38 +63,41 @@ public class Order implements Entity
                 if (order != this && ChronoUnit.DAYS.between(order.date, dateService.now()) <= 7)
                     hasOrderedInThePastWeek = true;
             }
-            if (hasOrderedInThePastWeek && mealNumber == 2)
+            if (hasOrderedInThePastWeek && mealNumber == 2) {
+                double sameWeekRate = 1D;
+                totalAmount += itemFullPrice * (1 - sameWeekRate);
                 continue;
-
-            boolean isTenthOrderOnThePlatform = customer.getOrders().size() % 10 == 0;
-            boolean isFifthOrderInTheRestaurant = customer.getOrders().stream().filter(o -> o.getRestaurant().equals(restaurant)).count() % 5 == 0;
+            }
 
             double TENTH_PLATFORM_ORDER_RATE = 0.15;
+            double platformRate = 0D;
+            boolean isTenthOrderOnThePlatform = customer.getOrders().size() % 10 == 0;
+            if(isTenthOrderOnThePlatform)
+            {
+                platformRate = TENTH_PLATFORM_ORDER_RATE;
+            }
+
             double FIFTH_RESTAURANT_ORDER_RATE = 0.10;
+            double restaurantRate = 0D;
+            boolean isFifthOrderInTheRestaurant = customer.getOrders().stream().filter(o -> o.getRestaurant().equals(restaurant)).count() % 5 == 0;
+            if(isTenthOrderOnThePlatform || isFifthOrderInTheRestaurant)
+            {
+                restaurantRate = FIFTH_RESTAURANT_ORDER_RATE;
+            }
+
+            double CHILD_RATE = 0.5;
+            double STUDENT_RATE = 0.25;
+            double customerRate = 0D;
             switch (customer.getType()) {
                 case CHILD:
-                    double CHILD_RATE = 0.5;
-                    if (isTenthOrderOnThePlatform)
-                        totalAmount += each.getPrice() * (1 - CHILD_RATE - FIFTH_RESTAURANT_ORDER_RATE - TENTH_PLATFORM_ORDER_RATE);
-                    else if (isFifthOrderInTheRestaurant)
-                        totalAmount += each.getPrice() * (1 - CHILD_RATE - FIFTH_RESTAURANT_ORDER_RATE);
-                    else totalAmount += each.getPrice() * (1 - CHILD_RATE);
+                    customerRate = CHILD_RATE;
                     break;
                 case STUDENT:
-                    double STUDENT_RATE = 0.25;
-                    if (isTenthOrderOnThePlatform)
-                        totalAmount += each.getPrice() * (1 - STUDENT_RATE - FIFTH_RESTAURANT_ORDER_RATE - TENTH_PLATFORM_ORDER_RATE);
-                    else if (isFifthOrderInTheRestaurant)
-                        totalAmount += each.getPrice() * (1 - STUDENT_RATE - FIFTH_RESTAURANT_ORDER_RATE);
-                    else totalAmount += each.getPrice() * (1 - STUDENT_RATE);
+                    customerRate = STUDENT_RATE;
                     break;
                 default:
-                    if (isTenthOrderOnThePlatform)
-                        totalAmount += each.getPrice() * (1 - FIFTH_RESTAURANT_ORDER_RATE - TENTH_PLATFORM_ORDER_RATE);
-                    else if (isFifthOrderInTheRestaurant)
-                        totalAmount += each.getPrice() * (1 - FIFTH_RESTAURANT_ORDER_RATE);
-                    else totalAmount += each.getPrice();
             }
+            totalAmount += itemFullPrice * (1 - platformRate - restaurantRate - customerRate);
         }
         return totalAmount;
     }
