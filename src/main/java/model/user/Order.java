@@ -64,26 +64,33 @@ public class Order implements Entity
             if (hasOrderedInThePastWeek && mealNumber == 2)
                 continue;
 
+            boolean isTenthOrderOnThePlatform = customer.getOrders().size() % 10 == 0;
+            boolean isFifthOrderInTheRestaurant = customer.getOrders().stream().filter(o -> o.getRestaurant().equals(restaurant)).count() % 5 == 0;
+
+            double TENTH_PLATFORM_ORDER_RATE = 0.15;
+            double FIFTH_RESTAURANT_ORDER_RATE = 0.10;
             switch (customer.getType()) {
                 case CHILD:
-                    if (customer.getOrders().size() % 10 == 0)
-                        totalAmount += each.getPrice() * (1-0.5-0.10-0.15);
-                    else if (customer.getOrders().stream().filter(o -> o.getRestaurant().equals(restaurant)).count() % 5 == 0)
-                        totalAmount += each.getPrice() * (1-0.5-0.10);
-                    else totalAmount += each.getPrice() * (1-0.5);
+                    double CHILD_RATE = 0.5;
+                    if (isTenthOrderOnThePlatform)
+                        totalAmount += each.getPrice() * (1 - CHILD_RATE - FIFTH_RESTAURANT_ORDER_RATE - TENTH_PLATFORM_ORDER_RATE);
+                    else if (isFifthOrderInTheRestaurant)
+                        totalAmount += each.getPrice() * (1 - CHILD_RATE - FIFTH_RESTAURANT_ORDER_RATE);
+                    else totalAmount += each.getPrice() * (1 - CHILD_RATE);
                     break;
                 case STUDENT:
-                    if (customer.getOrders().size() % 10 == 0)
-                        totalAmount += each.getPrice() * (1-0.25-0.10-0.15);
-                    else if (customer.getOrders().stream().filter(o -> o.getRestaurant().equals(restaurant)).count() % 5 == 0)
-                        totalAmount += each.getPrice() * (1-0.25-0.10);
-                    else totalAmount += each.getPrice() * (1-0.25);
+                    double STUDENT_RATE = 0.25;
+                    if (isTenthOrderOnThePlatform)
+                        totalAmount += each.getPrice() * (1 - STUDENT_RATE - FIFTH_RESTAURANT_ORDER_RATE - TENTH_PLATFORM_ORDER_RATE);
+                    else if (isFifthOrderInTheRestaurant)
+                        totalAmount += each.getPrice() * (1 - STUDENT_RATE - FIFTH_RESTAURANT_ORDER_RATE);
+                    else totalAmount += each.getPrice() * (1 - STUDENT_RATE);
                     break;
                 default:
-                    if (customer.getOrders().size() % 10 == 0)
-                        totalAmount += each.getPrice() * (1-0.10-0.15);
-                    else if (customer.getOrders().stream().filter(o -> o.getRestaurant().equals(restaurant)).count() % 5 == 0)
-                        totalAmount += each.getPrice() * (1-0.10);
+                    if (isTenthOrderOnThePlatform)
+                        totalAmount += each.getPrice() * (1 - FIFTH_RESTAURANT_ORDER_RATE - TENTH_PLATFORM_ORDER_RATE);
+                    else if (isFifthOrderInTheRestaurant)
+                        totalAmount += each.getPrice() * (1 - FIFTH_RESTAURANT_ORDER_RATE);
                     else totalAmount += each.getPrice();
             }
         }
