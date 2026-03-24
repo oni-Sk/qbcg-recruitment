@@ -5,6 +5,8 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import model.restaurant.Restaurant;
+import service.DateService;
+
 import static model.user.Customer.Type.CHILD;
 import static model.user.Customer.Type.OTHER;
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,7 +21,7 @@ class OrderTest
         Restaurant restaurant = new Restaurant("The restaurant");
         restaurant.addMeal("Meal 1", 15.0);
         restaurant.addMeal("Meal 2", 10.0);
-        customer.makeOrder(restaurant, List.of("Meal 1", "Meal 2"));
+        customer.makeOrder(restaurant, List.of("Meal 1", "Meal 2"), new DateService());
 
         // When
         Order order = customer.getOrders().get(0);
@@ -36,7 +38,7 @@ class OrderTest
         Restaurant restaurant = new Restaurant("The restaurant");
         restaurant.addMeal("Meal 1", 15.0);
         restaurant.addMeal("Meal 2", 10.0);
-        customer.makeOrder(restaurant, List.of("Meal 1", "Meal 2"));
+        customer.makeOrder(restaurant, List.of("Meal 1", "Meal 2"), new DateService());
 
         // When
         Order order = customer.getOrders().get(0);
@@ -44,4 +46,14 @@ class OrderTest
         // Then
         assertEquals(15.0+10.0, order.getPrice());
     }
+
+    /*@Test
+    void getPrice_whenHasOrderedPastWeek_thenOffer2ndMeal()
+    {
+        // Given
+
+        // When
+
+        // Then
+    }*/
 }

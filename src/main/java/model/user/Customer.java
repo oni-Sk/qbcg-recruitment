@@ -5,6 +5,7 @@ import java.util.List;
 
 import lombok.Getter;
 import model.restaurant.Restaurant;
+import service.DateService;
 
 public class Customer implements User
 {
@@ -28,9 +29,9 @@ public class Customer implements User
         this.orders = new ArrayList<>();
     }
 
-    public void makeOrder(Restaurant restaurant, List<String> meals)
+    public void makeOrder(Restaurant restaurant, List<String> meals, DateService dateService)
     {
-        orders.add(new Order(restaurant, this, meals));
+        orders.add(new Order(restaurant, this, meals, dateService));
     }
 
     public enum Type {

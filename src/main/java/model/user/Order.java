@@ -2,6 +2,7 @@ package model.user;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -9,11 +10,16 @@ import lombok.Getter;
 import model.Entity;
 import model.restaurant.Meal;
 import model.restaurant.Restaurant;
+import service.DateService;
+
 import static java.lang.String.format;
-import static java.time.LocalDate.now;
 
 public class Order implements Entity
 {
+
+    @Getter
+    private final DateService dateService;
+
     @Getter
     private final LocalDate date;
 
@@ -26,9 +32,10 @@ public class Order implements Entity
     @Getter
     private final List<Meal> meals;
 
-    Order(Restaurant restaurant, Customer customer, List<String> mealNames)
+    Order(Restaurant restaurant, Customer customer, List<String> mealNames, DateService dateService)
     {
-        this.date = now();
+        this.dateService = dateService;
+        this.date = dateService.now();
         this.restaurant = restaurant.withReceivedOrder(this);
         this.customer = customer;
         this.meals = mealNames.stream().map(restaurant::getMealByName).toList();
@@ -51,7 +58,7 @@ public class Order implements Entity
             boolean hasOrderedInThePastWeek = false;
             for (Order order : customer.getOrders())
             {
-                if (order != this && ChronoUnit.DAYS.between(order.date, now()) <= 7)
+                if (order != this && ChronoUnit.DAYS.between(order.date, dateService.now()) <= 7)
                     hasOrderedInThePastWeek = true;
             }
             if (hasOrderedInThePastWeek && mealNumber == 2)

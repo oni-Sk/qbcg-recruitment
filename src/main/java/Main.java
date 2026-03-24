@@ -3,12 +3,16 @@ import java.util.List;
 import model.restaurant.Restaurant;
 import model.user.Customer;
 import model.user.RestaurantOwner;
+import service.DateService;
+
 import static model.user.Customer.Type.OTHER;
 
 public class Main
 {
     public static void main(String[] args)
     {
+        DateService dateService = new DateService();
+
         // *******************
         // *** RESTAURANTS ***
         // *******************
@@ -47,8 +51,8 @@ public class Main
         // *** ORDERS ***
         // **************
 
-        catherine.makeOrder(ticino, List.of("Pizza tonno", "Tiramisu"));
-        clementine.makeOrder(etoile, List.of("Risotto", "Banana split"));
+        catherine.makeOrder(ticino, List.of("Pizza tonno", "Tiramisu"), dateService);
+        clementine.makeOrder(etoile, List.of("Risotto", "Banana split"), dateService);
 
         System.out.println("done");
     }
