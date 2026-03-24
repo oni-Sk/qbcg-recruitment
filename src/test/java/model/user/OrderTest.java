@@ -51,6 +51,44 @@ class OrderTest
     }
 
     @Test
+    void getPrice_whenOther_whenTenthOrder_then25PercentDiscount()
+    {
+        // Given
+        Customer customer = new Customer("Ba", "Bar", OTHER);
+        Restaurant restaurant = new Restaurant("The restaurant");
+        restaurant.addMeal("Meal 1", 15.0);
+        restaurant.addMeal("Meal 2", 10.0);
+        for (int i = 0; i < 10; i++) {
+            customer.makeOrder(restaurant, List.of("Meal 1", "Meal 2"), new DateService());
+        }
+
+        // When
+        Order order = customer.getOrders().getLast();
+
+        // Then
+        assertEquals((15.0)*(1-0.25), order.getPrice());
+    }
+
+    @Test
+    void getPrice_whenOther_whenFifthOrderSameRestaurant_then10PercentDiscount()
+    {
+        // Given
+        Customer customer = new Customer("Ba", "Bar", OTHER);
+        Restaurant restaurant = new Restaurant("The restaurant");
+        restaurant.addMeal("Meal 1", 15.0);
+        restaurant.addMeal("Meal 2", 10.0);
+        for (int i = 0; i < 5; i++) {
+            customer.makeOrder(restaurant, List.of("Meal 1", "Meal 2"), new DateService());
+        }
+
+        // When
+        Order lastOrder = customer.getOrders().getLast();
+
+        // Then
+        assertEquals((15.0)*(1-0.10), lastOrder.getPrice());
+    }
+
+    @Test
     void getPrice_whenHasOrderedPastWeek_thenOffer2ndMeal()
     {
         // Given
