@@ -2,7 +2,6 @@ package model.user;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -11,6 +10,7 @@ import model.Entity;
 import model.restaurant.Meal;
 import model.restaurant.Restaurant;
 import service.DateService;
+import service.RateService;
 
 import static java.lang.String.format;
 
@@ -19,6 +19,9 @@ public class Order implements Entity
 
     @Getter
     private final DateService dateService;
+
+    @Getter
+    private final RateService rateService;
 
     @Getter
     private final LocalDate date;
@@ -32,9 +35,10 @@ public class Order implements Entity
     @Getter
     private final List<Meal> meals;
 
-    Order(Restaurant restaurant, Customer customer, List<String> mealNames, DateService dateService)
+    Order(Restaurant restaurant, Customer customer, List<String> mealNames, DateService dateService, RateService rateService)
     {
         this.dateService = dateService;
+        this.rateService = rateService;
         this.date = dateService.now();
         this.restaurant = restaurant.withReceivedOrder(this);
         this.customer = customer;
@@ -85,18 +89,7 @@ public class Order implements Entity
                 restaurantRate = FIFTH_RESTAURANT_ORDER_RATE;
             }
 
-            double CHILD_RATE = 0.5;
-            double STUDENT_RATE = 0.25;
-            double customerRate = 0D;
-            switch (customer.getType()) {
-                case CHILD:
-                    customerRate = CHILD_RATE;
-                    break;
-                case STUDENT:
-                    customerRate = STUDENT_RATE;
-                    break;
-                default:
-            }
+            double customerRate = rateService.getCustomerRate(customer.getType());
             totalAmount += itemFullPrice * (1 - platformRate - restaurantRate - customerRate);
         }
         return totalAmount;
