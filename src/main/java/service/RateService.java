@@ -2,7 +2,10 @@ package service;
 
 import model.restaurant.Restaurant;
 import model.user.Customer;
+import model.user.Order;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -33,5 +36,20 @@ public class RateService
     public double getCustomerRate(Customer.Type type)
     {
         return customerRateMap.get(type);
+    }
+
+    public  double getSameWeekItemRate (int mealNumber, Customer customer, LocalDate orderDate)
+    {
+        int currentWeekOrderCount = 0;
+        if (mealNumber == 2) {
+            for (Order order : customer.getOrders())
+            {
+                if (ChronoUnit.DAYS.between(order.getDate(), orderDate) <= 7)
+                {
+                    currentWeekOrderCount++;
+                }
+            }
+        }
+        return currentWeekOrderCount >= 2 ? 1.0 : 0D;
     }
 }

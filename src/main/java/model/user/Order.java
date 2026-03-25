@@ -1,16 +1,14 @@
 package model.user;
 
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.util.Iterator;
-import java.util.List;
-
 import lombok.Getter;
 import model.Entity;
 import model.restaurant.Meal;
 import model.restaurant.Restaurant;
 import service.DateService;
 import service.RateService;
+
+import java.time.LocalDate;
+import java.util.List;
 
 import static java.lang.String.format;
 
@@ -53,27 +51,15 @@ public class Order implements Entity
     public double getPrice()
     {
         double totalAmount = 0D;
+
         int mealNumber = 0;
-        Iterator mealIterator = meals.iterator();
-        while(mealIterator.hasNext()) {
-            Meal each = (Meal) mealIterator.next();
-            mealNumber +=1;
+        for (Meal each : meals) {
+            mealNumber += 1;
 
-            double itemFullPrice = each.getPrice();
-
-            boolean hasOrderedInThePastWeek = false;
-            for (Order order : customer.getOrders())
-            {
-                if (order != this && ChronoUnit.DAYS.between(order.date, dateService.now()) <= 7)
-                    hasOrderedInThePastWeek = true;
-            }
-            if (hasOrderedInThePastWeek && mealNumber == 2) {
-                double sameWeekRate = 1D;
-                totalAmount += itemFullPrice * (1 - sameWeekRate);
-                continue;
-            }
-            totalAmount += itemFullPrice;
+            double sameWeekRate = rateService.getSameWeekItemRate(mealNumber, customer, dateService.now());
+            totalAmount += each.getPrice() * (1 - sameWeekRate);
         }
+
         double platformRate = rateService.getPlatformRate(customer);
         double restaurantRate = rateService.getRestaurantRate(customer, restaurant, platformRate);
         double customerRate = rateService.getCustomerRate(customer.getType());
