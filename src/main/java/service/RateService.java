@@ -29,7 +29,11 @@ public class RateService
 
     public double getRestaurantRate(Customer customer, Restaurant restaurant, double platformRate)
     {
-        boolean isFifthOrderInTheRestaurant = customer.getOrders().stream().filter(o -> o.getRestaurant().equals(restaurant)).count() % 5 == 0;
+
+        boolean isFifthOrderInTheRestaurant = restaurant.getOrders()
+                .stream()
+                .filter(order -> order.getCustomer().equals(customer))
+                .count() % 5 == 0;
         return (platformRate > 0D || isFifthOrderInTheRestaurant) ? 0.10 : 0;
     }
 
