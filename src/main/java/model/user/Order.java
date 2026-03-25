@@ -72,13 +72,12 @@ public class Order implements Entity
                 totalAmount += itemFullPrice * (1 - sameWeekRate);
                 continue;
             }
-
-            double platformRate = rateService.getPlatformRate(customer);
-            double restaurantRate = rateService.getRestaurantRate(customer, restaurant, platformRate);
-            double customerRate = rateService.getCustomerRate(customer.getType());
-
-            totalAmount += itemFullPrice * (1 - platformRate - restaurantRate - customerRate);
+            totalAmount += itemFullPrice;
         }
-        return totalAmount;
+        double platformRate = rateService.getPlatformRate(customer);
+        double restaurantRate = rateService.getRestaurantRate(customer, restaurant, platformRate);
+        double customerRate = rateService.getCustomerRate(customer.getType());
+
+        return totalAmount * (1 - platformRate - restaurantRate - customerRate);
     }
 }
