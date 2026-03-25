@@ -73,23 +73,10 @@ public class Order implements Entity
                 continue;
             }
 
-            double TENTH_PLATFORM_ORDER_RATE = 0.15;
-            double platformRate = 0D;
-            boolean isTenthOrderOnThePlatform = customer.getOrders().size() % 10 == 0;
-            if(isTenthOrderOnThePlatform)
-            {
-                platformRate = TENTH_PLATFORM_ORDER_RATE;
-            }
-
-            double FIFTH_RESTAURANT_ORDER_RATE = 0.10;
-            double restaurantRate = 0D;
-            boolean isFifthOrderInTheRestaurant = customer.getOrders().stream().filter(o -> o.getRestaurant().equals(restaurant)).count() % 5 == 0;
-            if(isTenthOrderOnThePlatform || isFifthOrderInTheRestaurant)
-            {
-                restaurantRate = FIFTH_RESTAURANT_ORDER_RATE;
-            }
-
+            double platformRate = rateService.getPlatformRate(customer);
+            double restaurantRate = rateService.getRestaurantRate(customer, restaurant, platformRate);
             double customerRate = rateService.getCustomerRate(customer.getType());
+
             totalAmount += itemFullPrice * (1 - platformRate - restaurantRate - customerRate);
         }
         return totalAmount;

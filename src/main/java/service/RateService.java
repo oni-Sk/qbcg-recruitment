@@ -1,5 +1,6 @@
 package service;
 
+import model.restaurant.Restaurant;
 import model.user.Customer;
 
 import java.util.EnumMap;
@@ -15,6 +16,18 @@ public class RateService
         customerRateMap.put(Customer.Type.STUDENT, 0.25);
         customerRateMap.put(Customer.Type.OTHER, 0D);
 
+    }
+;
+    public double getPlatformRate(Customer customer)
+    {
+        boolean isTenthOrderOnThePlatform = customer.getOrders().size() % 10 == 0;
+        return isTenthOrderOnThePlatform ? 0.15 : 0D;
+    }
+
+    public double getRestaurantRate(Customer customer, Restaurant restaurant, double platformRate)
+    {
+        boolean isFifthOrderInTheRestaurant = customer.getOrders().stream().filter(o -> o.getRestaurant().equals(restaurant)).count() % 5 == 0;
+        return (platformRate > 0D || isFifthOrderInTheRestaurant) ? 0.10 : 0;
     }
 
     public double getCustomerRate(Customer.Type type)
