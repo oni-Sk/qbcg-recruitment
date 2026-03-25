@@ -2,6 +2,7 @@ package model.user;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -24,7 +25,7 @@ class OrderTest
         Restaurant restaurant = new Restaurant("The restaurant");
         restaurant.addMeal("Meal 1", 15.0);
         restaurant.addMeal("Meal 2", 10.0);
-        customer.makeOrder(restaurant, List.of("Meal 1", "Meal 2"), new DateService());
+        customer.makeOrder(Map.of(restaurant, List.of("Meal 1", "Meal 2")), new DateService());
 
         // When
         Order order = customer.getOrders().get(0);
@@ -41,7 +42,7 @@ class OrderTest
         Restaurant restaurant = new Restaurant("The restaurant");
         restaurant.addMeal("Meal 1", 15.0);
         restaurant.addMeal("Meal 2", 10.0);
-        customer.makeOrder(restaurant, List.of("Meal 1", "Meal 2"), new DateService());
+        customer.makeOrder(Map.of(restaurant, List.of("Meal 1", "Meal 2")), new DateService());
 
         // When
         Order order = customer.getOrders().get(0);
@@ -59,7 +60,7 @@ class OrderTest
         restaurant.addMeal("Meal 1", 15.0);
         restaurant.addMeal("Meal 2", 10.0);
         for (int i = 0; i < 10; i++) {
-            customer.makeOrder(restaurant, List.of("Meal 1", "Meal 2"), new DateService());
+            customer.makeOrder(Map.of(restaurant, List.of("Meal 1", "Meal 2")), new DateService());
         }
 
         // When
@@ -78,7 +79,7 @@ class OrderTest
         restaurant.addMeal("Meal 1", 15.0);
         restaurant.addMeal("Meal 2", 10.0);
         for (int i = 0; i < 5; i++) {
-            customer.makeOrder(restaurant, List.of("Meal 1", "Meal 2"), new DateService());
+            customer.makeOrder(Map.of(restaurant, List.of("Meal 1", "Meal 2")), new DateService());
         }
 
         // When
@@ -103,8 +104,8 @@ class OrderTest
         restaurant.addMeal("Meal 1", 15.0);
         restaurant.addMeal("Meal 2", 10.0);
         restaurant.addMeal("Meal 3", 5.0);
-        customer.makeOrder(restaurant, List.of("Meal 1", "Meal 2"), mockDateService);
-        customer.makeOrder(restaurant, List.of("Meal 2", "Meal 3"), mockDateService);
+        customer.makeOrder(Map.of(restaurant, List.of("Meal 1", "Meal 2")), mockDateService);
+        customer.makeOrder(Map.of(restaurant, List.of("Meal 2", "Meal 3")), mockDateService);
 
         // When
         Order order = customer.getOrders().getLast();
@@ -128,8 +129,8 @@ class OrderTest
         restaurant.addMeal("Meal 1", 15.0);
         restaurant.addMeal("Meal 2", 10.0);
         restaurant.addMeal("Meal 3", 5.0);
-        customer.makeOrder(restaurant, List.of("Meal 1", "Meal 2"), mockDateService);
-        customer.makeOrder(restaurant, List.of("Meal 2", "Meal 3"), mockDateService);
+        customer.makeOrder(Map.of(restaurant, List.of("Meal 1", "Meal 2")), mockDateService);
+        customer.makeOrder(Map.of(restaurant, List.of("Meal 2", "Meal 3")), mockDateService);
 
         // When
         Order order = customer.getOrders().getLast();

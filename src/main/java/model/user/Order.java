@@ -9,6 +9,7 @@ import service.RateService;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import static java.lang.String.format;
 
@@ -33,14 +34,16 @@ public class Order implements Entity
     @Getter
     private final List<Meal> meals;
 
-    Order(Restaurant restaurant, Customer customer, List<String> mealNames, DateService dateService, RateService rateService)
+    Order(Map<Restaurant, List<String>> restaurantMeals, Customer customer, DateService dateService, RateService rateService)
     {
         this.dateService = dateService;
         this.rateService = rateService;
         this.date = dateService.now();
-        this.restaurant = restaurant.withReceivedOrder(this);
+
+        Map.Entry<Restaurant, List<String>> entry = restaurantMeals.entrySet().iterator().next();
+        this.restaurant = entry.getKey().withReceivedOrder(this);
+        this.meals = entry.getValue().stream().map(restaurant::getMealByName).toList();
         this.customer = customer;
-        this.meals = mealNames.stream().map(restaurant::getMealByName).toList();
     }
 
     public String getName()

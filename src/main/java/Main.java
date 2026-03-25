@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.Map;
 
 import model.restaurant.Restaurant;
 import model.user.Customer;
@@ -51,8 +52,8 @@ public class Main
         // *** ORDERS ***
         // **************
 
-        catherine.makeOrder(ticino, List.of("Pizza tonno", "Tiramisu"), dateService);
-        clementine.makeOrder(etoile, List.of("Risotto", "Banana split"), dateService);
+        catherine.makeOrder(Map.of(ticino, List.of("Pizza tonno", "Tiramisu")), dateService);
+        clementine.makeOrder(Map.of(etoile, List.of("Risotto", "Banana split")), dateService);
 
         System.out.println("done");
     }

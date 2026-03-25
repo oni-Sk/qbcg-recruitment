@@ -2,6 +2,7 @@ package model.user;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import lombok.Getter;
 import model.restaurant.Restaurant;
@@ -30,9 +31,9 @@ public class Customer implements User
         this.orders = new ArrayList<>();
     }
 
-    public void makeOrder(Restaurant restaurant, List<String> meals, DateService dateService)
+    public void makeOrder(Map<Restaurant, List<String>> restaurantMeals, DateService dateService)
     {
-        orders.add(new Order(restaurant, this, meals, dateService, new RateService()));
+        orders.add(new Order(restaurantMeals, this, dateService, new RateService()));
     }
 
     public enum Type {
